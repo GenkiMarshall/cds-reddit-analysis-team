@@ -1,11 +1,9 @@
 #! /bin/python2
 
-import httplib
+import requests # http://docs.python-requests.org/en/latest/user/quickstart
 
-# specify user header
-# http://stackoverflow.com/questions/13213048/urllib2-http-error-429
-hdr= { 'User-Agent' : 'genki marshall super user agent' }
-conn = httplib.HTTPConnection('www.reddit.com')
-conn.request('GET', '/r/unixporn/top.json?t=month&limit=2', headers=hdr)
-print conn.getresponse().read()
-conn.close()
+url = 'http://www.reddit.com/r/unixporn/top.json?t=month&limit=2'
+header = {'user-agent': 'genki marshall user agent'}
+r = requests.get(url, headers=header)
+
+print(r.json())
