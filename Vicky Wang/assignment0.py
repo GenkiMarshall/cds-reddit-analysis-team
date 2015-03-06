@@ -7,7 +7,7 @@ import json
 import datetime
 
 opener = urllib2.build_opener()
-opener.addheader = [('User-agent', 'Vicky')]
+opener.addheader = [('User-agent', 'Vicky user-agents')]
 a = opener.open('http://www.reddit.com/r/aww/comments/2vrx59/husky_pup_stealing_from_a_ferret/.json')
 
 response = a.read()
@@ -23,6 +23,8 @@ def getTime(data):
         if a['kind'] == 't1':
             if "data" in a['data']['replies']:
                 time = time + [datetime.datetime.utcfromtimestamp(a['data']['created_utc']).hour] + getTime(a['data']['replies']['data']['children'])
+            else:
+                time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']).hour)
     return time
 
 def getUps(data):
@@ -33,6 +35,8 @@ def getUps(data):
         if a['kind'] == 't1':
             if "data" in a['data']['replies']:
                 ups = ups + [a['data']['ups']] + getUps(a['data']['replies']['data']['children'])
+            else:
+                ups.append(a['data']['ups'])
     return ups
 
 print str(getTime(data)) + '  ' + str(getUps(data))
