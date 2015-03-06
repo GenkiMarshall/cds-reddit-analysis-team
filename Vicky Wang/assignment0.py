@@ -13,7 +13,6 @@ a = opener.open('http://www.reddit.com/r/aww/comments/2vrx59/husky_pup_stealing_
 response = a.read()
 
 jsonString = json.loads(response)
-
 data = jsonString[1]['data']['children']
 
 def getTime(data):
@@ -23,8 +22,7 @@ def getTime(data):
     for a in data:
         if a['kind'] == 't1':
             if "data" in a['data']['replies']:
-                time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']).hour)
-                time = time + getTime(a['data']['replies']['data']['children'])
+                time = time + [datetime.datetime.utcfromtimestamp(a['data']['created_utc']).hour] + getTime(a['data']['replies']['data']['children'])
     return time
 
 def getUps(data):
@@ -34,11 +32,12 @@ def getUps(data):
     for a in data:
         if a['kind'] == 't1':
             if "data" in a['data']['replies']:
-                ups.append(a['data']['ups'])
-                ups = ups + getUps(a['data']['replies']['data']['children'])
+                ups = ups + [a['data']['ups']] + getUps(a['data']['replies']['data']['children'])
     return ups
 
 print str(getTime(data)) + '  ' + str(getUps(data))
+print len(getTime(data))
+print len(getUps(data))
 
 #call the function recursively until it finds all the comments
 #time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']))
