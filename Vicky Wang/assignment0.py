@@ -22,10 +22,9 @@ def getTime(data):
     time = []
     for a in data:
         if a['kind'] == 't1':
-            #time = datetime.datetime.utcfromtimestamp(a['data']['created_utc']) + getTime(a['data']['children'])
-            print a['data']
-            print a['data']['children']
-            time = datetime.datetime.utcfromtimestamp(a['data']['created_utc'])
+            if "data" in a['data']['replies']:
+                time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']).hour)
+                time = time + getTime(a['data']['replies']['data']['children'])
     return time
 
 def getUps(data):
@@ -34,11 +33,13 @@ def getUps(data):
     ups = []
     for a in data:
         if a['kind'] == 't1':
-            #ups = a['data']['ups'] + getUps(a['data']['children'])
-            ups = a['data']['ups']
+            if "data" in a['data']['replies']:
+                ups.append(a['data']['ups'])
+                ups = ups + getUps(a['data']['replies']['data']['children'])
     return ups
 
 print str(getTime(data)) + '  ' + str(getUps(data))
+
 #call the function recursively until it finds all the comments
-
-
+#time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']))
+#time.append(getTime(a['data']['replies']['data']['children']))
