@@ -15,6 +15,8 @@ response = a.read()
 jsonString = json.loads(response)
 data = jsonString[1]['data']['children']
 
+#call the function recursively until it finds all the "created_utc" and "ups"
+
 def getTime(data):
     if (data == []):
         return []
@@ -43,6 +45,5 @@ print str(getTime(data)) + '  ' + str(getUps(data))
 print len(getTime(data))
 print len(getUps(data))
 
-#call the function recursively until it finds all the comments
-#time.append(datetime.datetime.utcfromtimestamp(a['data']['created_utc']))
-#time.append(getTime(a['data']['replies']['data']['children']))
+
+
