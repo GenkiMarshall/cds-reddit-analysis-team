@@ -1,3 +1,3 @@
-# Cornell Data Science Project Team - Reddit Analysis
+### Cornell Data Science Project Team - Reddit Analysis
 
-For the moment, this will just be member's personal projects
+For the moment, this repo will just be a collection of members' personal projects.
