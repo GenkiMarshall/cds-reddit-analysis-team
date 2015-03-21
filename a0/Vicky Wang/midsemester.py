@@ -22,7 +22,7 @@ score_list = []
 
 # Going through a for loop using Reddit's filtering feature by search afte certain
 # ids to go back in time
-for i in range(2):
+for i in range(20):
     
     # Retrieving the json string store in the api through url request
     r = requests.get(url, headers=header).json()
