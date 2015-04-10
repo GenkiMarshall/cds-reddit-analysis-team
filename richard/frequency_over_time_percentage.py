@@ -32,11 +32,19 @@ for i in range(10):
     print '---'
     #sleep(1)
 #print all_freq
-plt.plot(range(24),map(len,all_freq), label="all posts")
-plt.plot(range(24),map(len,spec_freq), label="posts with '" + word + "' in the title")
+a = map(len,all_freq)
+print a
+b = map(len,spec_freq)
+print b
+ratios = []
+for i in range(len(a)):
+    if a[i] == 0:
+        ratios.append(0)
+    else:
+        ratios.append((100.*b[i])/a[i])
+plt.plot(range(24), ratios, 'r')
 plt.title('posts in /r/aww over a day')
 plt.xlabel('hour')
-plt.ylabel('number of threads posted')
-plt.xlim((0,23))
-plt.legend(bbox_to_anchor=(.1, .9), loc=2, borderaxespad=0.)
+plt.ylabel('percentage')
+plt.axis([0, 23, 0, 100])
 plt.show()
