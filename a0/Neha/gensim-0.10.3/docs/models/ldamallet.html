@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta property="description" content="Efficient topic modelling of text semantics in Python." />
+    <meta property="og:title" content="gensim: topic modelling for humans" />
+    <meta property="og:description" content="Efficient topic modelling in Python" />
+
+    
+      <title>gensim: models.ldamallet – Latent Dirichlet Allocation via Mallet</title>
+
+    
+  <link rel="stylesheet" href="../_static/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/jquery.qtip.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/anythingslider.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-24066335-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </head>
+
+  <body>
+    <div id="topwrap">
+      
+      <div id="top1">
+        <div id="left1">
+          <h1 class="h1gensim">
+            <img src="../_static/images/logo-gensim_compact.png" alt="gensim logo" title="Gensim - topic modelling for humans" />
+          </h1>
+        </div>
+
+        <div id="middleright">
+          <div id="middle1">
+            <div id="gensim"><a href="../index.html"><img src="../_static/images/gensim_compact.png" alt="gensim" title="Gensim home" /></a></div>
+            <div id="tagline"><img src="../_static/images/tagline_compact.png" alt="gensim tagline" /></div>
+          </div>
+          <div id="right1">
+            <div class="consulting-banner">
+              <h3><a href="http://radimrehurek.com/">Get Expert Help</a></h3>
+              <p>• machine learning, NLP, data mining</p>
+              <p>• custom SW design, development, optimizations</p>
+              <p>• tech trainings &amp; IT consulting</p>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+
+      
+      <div id="menu">
+        <div id="indentation1">
+          <ul class="menubuttons">
+            <li class="menubutton"><a href="../index.html">Home</a></li>
+            <li class="menubutton"><a href="../tutorial.html">Tutorials</a></li>
+            <li class="menubutton"><a href="../install.html">Install</a></li>
+            <li class="menubutton"><a href="../support.html">Support</a></li>
+            <li class="menubutton"><a href="../apiref.html">API</a></li>
+            <li class="menubutton"><a href="../about.html">About</a></li>
+          </ul>
+        </div>
+      </div>
+      
+
+      <div class="clearer"></div>
+    </div>
+
+    
+  <script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+    URL_ROOT: '../',
+    VERSION: '0.10.3',
+    COLLAPSE_INDEX: false,
+    FILE_SUFFIX: '.html',
+    HAS_SOURCE: true
+  };
+  </script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.qtip.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-migrate-1.1.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.anythingslider.min.js"></script>
+
+    
+    <div class="document">
+      
+        <div id="thinbanner">
+          <div id="bodythinbanner">
+            <span class="h2gensim">models.ldamallet – Latent Dirichlet Allocation via Mallet</span>
+          </div>
+        </div>
+        <div class="obsah">
+          <div class="obsahwrapper">
+            
+  <div class="section" id="module-gensim.models.ldamallet">
+<span id="models-ldamallet-latent-dirichlet-allocation-via-mallet"></span><h1><tt class="xref py py-mod docutils literal"><span class="pre">models.ldamallet</span></tt> &#8211; Latent Dirichlet Allocation via Mallet<a class="headerlink" href="#module-gensim.models.ldamallet" title="Permalink to this headline">¶</a></h1>
+<p>Python wrapper for Latent Dirichlet Allocation (LDA) from MALLET, the Java topic modelling
+toolkit <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
+<p>This module allows both LDA model estimation from a training corpus and inference of topic
+distribution on new, unseen documents, using an (optimized version of) collapsed
+gibbs sampling from MALLET.</p>
+<p>MALLET&#8217;s LDA training requires O(#corpus_words) of memory, keeping the entire corpus in RAM.
+If you find yourself running out of memory, either decrease the <cite>workers</cite> constructor
+parameter, or use <cite>LdaModel</cite> which needs only O(1) memory.</p>
+<p>The wrapped model can NOT be updated with new documents for online training &#8211; use gensim&#8217;s <cite>LdaModel</cite> for that.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaMallet</span><span class="p">(</span><span class="s">&#39;/Users/kofola/mallet-2.0.7/bin/mallet&#39;</span><span class="p">,</span> <span class="n">corpus</span><span class="o">=</span><span class="n">my_corpus</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">id2word</span><span class="o">=</span><span class="n">dictionary</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">model</span><span class="p">[</span><span class="n">my_vector</span><span class="p">]</span>  <span class="c"># print LDA topics of a document</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://mallet.cs.umass.edu/">http://mallet.cs.umass.edu/</a></td></tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="gensim.models.ldamallet.LdaMallet">
+<em class="property">class </em><tt class="descclassname">gensim.models.ldamallet.</tt><tt class="descname">LdaMallet</tt><big>(</big><em>mallet_path</em>, <em>corpus=None</em>, <em>num_topics=100</em>, <em>id2word=None</em>, <em>workers=4</em>, <em>prefix=None</em>, <em>optimize_interval=0</em>, <em>iterations=1000</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../utils.html#gensim.utils.SaveLoad" title="gensim.utils.SaveLoad"><tt class="xref py py-class docutils literal"><span class="pre">gensim.utils.SaveLoad</span></tt></a></p>
+<p>Class for LDA training using MALLET. Communication between MALLET and Python
+takes place by passing around data files on disk and calling Java with subprocess.call().</p>
+<p><cite>mallet_path</cite> is path to the mallet executable, e.g. <cite>/home/kofola/mallet-2.0.7/bin/mallet</cite>.
+<cite>corpus</cite> is a gensim corpus, aka a stream of sparse document vectors.
+<cite>id2word</cite> is a mapping between tokens ids and token.
+<cite>workers</cite> is the number of threads, for parallel training.
+<cite>prefix</cite> is the string prefix under which all data files will be stored; default: system temp + random filename prefix.
+<cite>optimize_interval</cite> optimize hyperparameters every N iterations (sometimes leads to Java exception; 0 to switch off hyperparameter optimization).
+<cite>iterations</cite> is the number of sampling iterations.</p>
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.convert_input">
+<tt class="descname">convert_input</tt><big>(</big><em>corpus</em>, <em>infer=False</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.convert_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize documents (lists of unicode tokens) to a temporary text file,
+then convert that text file to MALLET format <cite>outfile</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.fcorpusmallet">
+<tt class="descname">fcorpusmallet</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.fcorpusmallet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.fcorpustxt">
+<tt class="descname">fcorpustxt</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.fcorpustxt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.fdoctopics">
+<tt class="descname">fdoctopics</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.fdoctopics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.finferencer">
+<tt class="descname">finferencer</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.finferencer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.fstate">
+<tt class="descname">fstate</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.fstate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.ftopickeys">
+<tt class="descname">ftopickeys</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.ftopickeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.fwordweights">
+<tt class="descname">fwordweights</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.fwordweights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="gensim.models.ldamallet.LdaMallet.load">
+<em class="property">classmethod </em><tt class="descname">load</tt><big>(</big><em>fname</em>, <em>mmap=None</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a previously saved object from file (also see <cite>save</cite>).</p>
+<p>If the object was saved with large arrays stored separately, you can load
+these arrays via mmap (shared memory) using <cite>mmap=&#8217;r&#8217;</cite>. Default: don&#8217;t use
+mmap, load large arrays as normal objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.load_word_topics">
+<tt class="descname">load_word_topics</tt><big>(</big><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.load_word_topics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.print_topic">
+<tt class="descname">print_topic</tt><big>(</big><em>topicid</em>, <em>topn=10</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.print_topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.print_topics">
+<tt class="descname">print_topics</tt><big>(</big><em>num_topics=10</em>, <em>num_words=10</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.print_topics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.save">
+<tt class="descname">save</tt><big>(</big><em>fname</em>, <em>separately=None</em>, <em>sep_limit=10485760</em>, <em>ignore=frozenset([])</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the object to file (also see <cite>load</cite>).</p>
+<p>If <cite>separately</cite> is None, automatically detect large numpy/scipy.sparse arrays
+in the object being stored, and store them into separate files. This avoids
+pickle memory errors and allows mmap&#8217;ing large arrays back on load efficiently.</p>
+<p>You can also set <cite>separately</cite> manually, in which case it must be a list of attribute
+names to be stored in separate files. The automatic check is not performed in this case.</p>
+<p><cite>ignore</cite> is a set of attribute names to <em>not</em> serialize (file handles, caches etc). On
+subsequent load() these attributes will be set to None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.show_topic">
+<tt class="descname">show_topic</tt><big>(</big><em>topicid</em>, <em>topn=10</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.show_topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.show_topics">
+<tt class="descname">show_topics</tt><big>(</big><em>num_topics=10</em>, <em>num_words=10</em>, <em>log=False</em>, <em>formatted=True</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.show_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the <cite>num_words</cite> most probable words for <cite>num_topics</cite> number of topics.
+Set <cite>num_topics=-1</cite> to print all topics.</p>
+<p>Set <cite>formatted=True</cite> to return the topics as a list of strings, or <cite>False</cite> as lists of (weight, word) pairs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gensim.models.ldamallet.LdaMallet.train">
+<tt class="descname">train</tt><big>(</big><em>corpus</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.LdaMallet.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="gensim.models.ldamallet.read_doctopics">
+<tt class="descclassname">gensim.models.ldamallet.</tt><tt class="descname">read_doctopics</tt><big>(</big><em>fname</em>, <em>eps=1e-06</em><big>)</big><a class="headerlink" href="#gensim.models.ldamallet.read_doctopics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield document topic vectors from MALLET&#8217;s &#8220;doc-topics&#8221; format, as sparse gensim vectors.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      
+
+      <div class="clearer"></div>
+    </div>
+    
+
+    
+    <div id="footer">
+      <div id="footerwrapper">
+        <div id="footerleft">
+          <img src="../_static/images/logo-gensim.png" class="smallerlogo" alt="smaller gensim logo" />
+          <a href="../index.html"><img src="../_static/images/gensim-footer.png" alt="gensim footer image" title="Gensim home" /></a>
+
+          <div class="copyright">
+            &copy; Copyright 2009-now, <a href="mailto:radimrehurek@seznam.cz" style="color:white"> Radim Řehůřek</a>
+            <br />
+              Last updated on Nov 17, 2014.
+          </div>
+        </div>
+
+        <div id="footermiddleright">
+          <div id="footermiddle">
+            <ul class="navigation">
+              <li><a href="../index.html">
+                Home
+              </a></li>
+              <li>|</li>
+              <li><a href="../tutorial.html">
+                Tutorials
+              </a></li>
+              <li>|</li>
+              <li><a href="../install.html">
+                Install
+              </a></li>
+              <li>|</li>
+              <li><a href="../support.html">
+                Support
+              </a></li>
+              <li>|</li>
+              <li><a href="../apiref.html">
+                API
+              </a></li>
+              <li>|</li>
+              <li><a href="../about.html">
+                About
+              </a></li>
+            </ul>
+
+            <div class="tweetodsazeni">
+              <div class="tweet">
+                <a href="https://twitter.com/radimrehurek" target="_blank" style="color: white">Tweet @RadimRehurek</a>
+              </div>
+            </div>
+
+          </div>
+
+          <div id="footerright">
+            <div class="footernadpis">
+              Support:
+            </div>
+            <div class="googlegroupsodsazeni">
+              <a href="https://groups.google.com/group/gensim" class="googlegroups">
+                Stay informed via gensim mailing list:
+              </a>
+
+              <form action="http://groups.google.com/group/gensim/boxsubscribe">
+                <input type="text" name="email" placeholder="your@email.com" size="28" />
+                <input type="submit" name="sub" value="Subscribe" />
+              </form>
+
+            </div>
+
+            <div class="addthis_toolbox addthis_default_style addthis_32x32_style"
+                addthis:title="#gensim"
+                addthis:description="Efficient Topic Modelling in Python"
+                style="margin:20px 0 0 0">
+              <a class="addthis_button_preferred_1"></a>
+              <a class="addthis_button_preferred_2"></a>
+              <a class="addthis_button_preferred_3"></a>
+              <a class="addthis_button_preferred_4"></a>
+              <a class="addthis_button_compact"></a>
+              <a class="addthis_counter addthis_bubble_style"></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    
+
+    <script type="text/javascript">
+      (function() {
+      var at = document.createElement('script'); at.type = 'text/javascript'; at.async = true;
+      at.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 's7.addthis.com/js/250/addthis_widget.js#pubid=ra-4d738b9b1d31ccbd';
+      var sat = document.getElementsByTagName('script')[0]; sat.parentNode.insertBefore(at, sat);
+      })();
+    </script>
+
+  </body>
+</html>
