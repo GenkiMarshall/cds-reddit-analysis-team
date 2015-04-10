@@ -15,21 +15,18 @@ comment_ex = base_ex + "/cq7t7ka.json"
 # HELPERS
 
 # MAIN
-def get_data (url) :
-
-    r = requests.get(url, headers=header)
-    data = r.json()
-
-    meta_data = data[0]['data']['children'][0]['data']
-    other_data = data[1]['data']['children']
+# not is_link => comment
+def get_data (url, is_link) :
+    data = requests.get(url, headers=header).json()
+    i = 0 if is_link else 1
+    meta_data = data[i]['data']['children'][0]['data']
 
     # starting from top
 
     # starting from bottom
 
-    print(meta_data)
-    print(other_data)
+    print(is_link, meta_data)
 
-get_data(link_ex)
+get_data(link_ex, True)
 time.sleep(2)
-get_data(comment_ex)
+get_data(comment_ex, False)
