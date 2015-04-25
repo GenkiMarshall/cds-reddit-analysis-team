@@ -181,56 +181,87 @@ def getLastObservedPost(a):
 		return min(commentsList[0]['data']['created_utc'], threadsList[0]['data']['created_utc'])
 
 
+def getWeeksOfLinks(t3List, totalWeeks, first):
+    allWeeks = [None] * totalWeeks
+    for n in range(totalWeeks):
+        start_utc = first - n * 604800
+        end_utc = start_utc - 604800
+        allWeeks[n] = []
+        for link in t3List:
+            if (link['data']['created_utc'] > end_utc) and (link['data']['created_utc'] <= start_utc):
+                allWeeks[n].append(link)
+    return allWeeks
 
-
-
+                
+def getWeeksOfComments(t1List, totalWeeks, first):
+    allWeeks = [None] * totalWeeks
+    for n in range(totalWeeks):
+        start_utc = first - n * 604800
+        end_utc = start_utc - 604800
+        allWeeks[n] = []
+        for comment in t1List:
+            if (comment['data']['created_utc'] > end_utc) and (comment['data']['created_utc'] <= start_utc):
+                allWeeks[n].append(comment)
+    return allWeeks
 
 
 
 
 #Tester
 
-#input the name of the file containing all authors
-filename = raw_input('Type the name of the file containing all authors: ')
+#input author's name
+author = raw_input('Type a Reddit author\'s name: ')
 
-# Process text file
-file = open(filename)
-authorlist = []    
-for line in file:
-    if ('\n' in line):
-        authorlist.append(line[:-1])
-    else:
-        authorlist.append(line)
-file.close()
-
-# Collect only the authors who were snoped
-snopedlist = []
-for a in authorlist:
-	author = a.split()
-	if (int(author[1]) > 0):
-		snopedlist.append(author[0])
-
-# print the fields for each snoped author
-for snoped in snopedlist:
-	is_mod = isMod(snoped)
-	is_verified = isVerified(snoped)
-	is_gold = isGold(snoped)
-	created_utc = getCreatedUTC(snoped)
+# get the fields
+is_mod = isMod(author)
+is_verified = isVerified(author)
+is_gold = isGold(author)
+created_utc = getCreatedUTC(author)
 	
-	have_all_comments = haveAllComments(snoped)
-	have_all_threads = haveAllThreads(snoped)
+have_all_comments = haveAllComments(author)
+have_all_threads = haveAllThreads(author)
 
-	first_observed_post = getFirstObservedPost(snoped)
-	last_observed_post = getLastObservedPost(snoped)
+first_observed_post = getFirstObservedPost(author)
+last_observed_post = getLastObservedPost(author)
 
-	print snoped + '- is_mod: ' + str(is_mod) +'\n'
-	print snoped + '- is_verified: ' + str(is_verified) + '\n'
-	print snoped + '- is_gold: ' + str(is_gold) + '\n'
-	print snoped + '- created_utc: ' + str(created_utc) + '\n'
-	print snoped + '- have_all_comments: ' + str(have_all_comments) + '\n'
-	print snoped + '- have_all_threads: ' + str(have_all_threads) + '\n'
-	print snoped + '- first_observed_post: ' + str(first_observed_post) + '\n'
-	print snoped + '- last_observed_post: ' + str(last_observed_post) + '\n\n'
+t3List = getListOfThreadsChildren(author)
+t1List = getListOfCommentsChildren(author)
+
+totalWeeks = int((first_observed_post - last_observed_post)/604800)
+weeksOfLinks = getWeeksOfLinks(t3List, totalWeeks, first_observed_post)
+weeksOfComments = getWeeksOfComments(t1List, totalWeeks, first_observed_post)
+
+print str(weeksOfLinks)
+print str(weeksOfComments)
+
+links_per_week = [None] * totalWeeks
+links_karma_per_week = [None] * totalWeeks
+comments_per_week = [None] * totalWeeks
+comments_karma_per_week = [None] * totalWeeks
+
+for n in range(totalWeeks):
+    links_per_week[n] = len(weeksOfLinks[n])
+    links_karma_per_week[n] = sum(weeksOfLinks[n]['data']['score'])
+    comments_per_week[n] = len(weeksOfComments[n])
+    comments_karma_per_week[n] = sum(weeksOfComments[n]['data']['score'])
+
+print 'is_mod: ' + str(is_mod) +'\n'
+print 'is_verified: ' + str(is_verified) + '\n'
+print 'is_gold: ' + str(is_gold) + '\n'
+print 'created_utc: ' + str(created_utc) + '\n'
+print 'have_all_comments: ' + str(have_all_comments) + '\n'
+print 'have_all_threads: ' + str(have_all_threads) + '\n'
+print 'first_observed_post: ' + str(first_observed_post) + '\n'
+print 'last_observed_post: ' + str(last_observed_post) + '\n'
+
+print 'links_per_week: ' + str(links_per_week) + '\n'
+print 'links_karma_per_week: ' + str(links_karma_per_week) + '\n'
+print 'comments_per_week: ' + str(comments_per_week) + '\n'
+print 'comments_karma_per_week: ' + str(comments_karma_per_week) + '\n'
+
+
+
+
 
 
 
