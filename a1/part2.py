@@ -10,24 +10,29 @@ import requests
 # comment = comment
 
 header = {'user-agent': 'part two user agent'} # required for rate limiting
-BASE_URL = "http://www.reddit.com"
-LINK_EX = "r/pics/comments/324ln7/a_giant_boulder_fell_on_the_highway_in_ohio"
-COMMENT_EX_1 = "cq7t7ka" # a top-level comment
-COMMENT_EX_2 = "cq7vl6s" # a reply to a top-level comment
+BASE_URL = 'http://www.reddit.com'
+COMMENT_EX_1 = 'cq7t7ka' # a top-level comment
+COMMENT_EX_2 = 'cq7vl6s' # a reply to a top-level comment
 
 
 # OTHER HELPERS
 
 # creates a url
 def make_url(*args):
-    ret = BASE_URL
-    for add in args: ret = ret + "/" + add
-    return ret + ".json"
+    ret = ''
+    for add in args:
+        if ret == '':
+            ret = add
+        elif ret[-1:] == '/':
+            ret += add
+        else:
+            ret += '/' + add
+    return ret + '.json'
 
-# takes in a fullname of a thing "tn_abc..." and returns n == 3
+# takes in a fullname of a thing 'tn_abc...' and returns n == 3
 def is_link_name(fullname): return fullname[1:2] == '3'
 
-# takes in a fullname of a thing "tn_abc..." and returns its id "abc..."
+# takes in a fullname of a thing 'tn_abc...' and returns its id 'abc...'
 def rm_type(fullname): return fullname[3:]
 
 # returns the replies to the given link or comment
@@ -40,18 +45,25 @@ def get_replies(data, is_link):
 # section = 0 for link, 1 for comment
 def get_meta_data(data, section): return data[section]['data']['children'][0]['data']
 
+# takes in a link fullname of form "t3_31y53t" and returns the link url itself
+def get_url_from_fullname(fullname):
+    link_id = rm_type(fullname)
+    r = requests.get(make_url(BASE_URL, link_id), headers=header)
+    return r.url[:-6]
 
 # IMPL HELPERS
 
 # iterates through all direct replies to given parent to find ...
 # the number of direct replies before created_utc
 # does the comment_tree looper
-def get_num_prior_replies(parent_fullname, orig_utc):
+# base_link_id is something of form 't3_31y53t'
+# parent_fullname is something of form 't{3,1}_cq7t7ka'
+def get_num_prior_replies(base_link_id, parent_fullname, orig_utc):
 
-    # helper for when finds "more" objects
+    # helper for when finds 'more' objects
     # checks if the comment of the given comment_id was posted before orig_utc
     def check_if_earlier(comment_id):
-        data = requests.get(make_url(LINK_EX, comment_id), headers=header).json()
+        data = requests.get(make_url(base_link, comment_id), headers=header).json()
         return get_meta_data(data, 1)['created_utc'] < orig_utc
 
     # comment_tree has the given parent as the root
@@ -79,15 +91,15 @@ def get_num_prior_replies(parent_fullname, orig_utc):
     parent_id = rm_type(parent_fullname)
     is_link = is_link_name(parent_fullname)
     if is_link:
-        parent_url = make_url(parent_id)
+        parent_url = make_url(BASE_URL, parent_id)
     else:
-        parent_url = make_url(LINK_EX, parent_id)
+        parent_url = make_url(get_url_from_fullname(base_link_id), parent_id)
+    print('93', parent_url)
     data = requests.get(parent_url, headers=header).json()
     return gnpr_helper(get_replies(data, is_link))
 
-# MAIN
-def get_data(url, is_comment_url):
-    data = requests.get(url, headers=header).json()
+# gets non-trivial data that is not in the author's history
+def get_extra_data(url, is_comment_url):
     meta_data = get_meta_data(data, 1 if is_comment_url else 0)
 
     # starting from top
@@ -96,17 +108,58 @@ def get_data(url, is_comment_url):
     if is_comment_url:
         print('analyzing comment: ' + url)
 
-         # grr, reddit doesn't follow its own naming conventions from the API
-        parent_fullname = meta_data['parent_id']
-
-        # the number of replies that have same direct parent ...
-        # ... and were posted before this
-        num_prior_replies = get_num_prior_replies(
-            parent_fullname, meta_data['created_utc'])
-        print("num_replies_before_this_reply", num_prior_replies)
     else:
         print('analyzing link: ' + url)
 
-get_data(make_url(LINK_EX, COMMENT_EX_1), True)
-time.sleep(2)
-# get_data(make_url(LINK_EX, COMMENT_EX_2), True)
+
+# MAIN AUTHOR LOOPER
+# TODO later, deal with the 'after' section of an author
+def author_looper(author):
+    url = make_url(BASE_URL, 'user', author)
+    data = requests.get(url, headers=header).json()
+    posts = data['data']['children']
+
+    key_list = ['time_since_last_comment', 'time_since_last_link',
+                'time_since_last_link_or_comment', 'score',
+                'upvote_ratio (links only)', 'is_reply_to_reply (comments only)',
+                'response time', 'created_utc', 'author', 'id', 'subreddit',
+                'body', 'urls_included', 'is_first_comment_by_author_in_thread',
+                'url', 'kind' 'num_replies_before_this_reply']
+
+    for p in posts:
+        dictionary = {}
+        for key in key_list:
+            dictionary[key] = None
+
+        main_data = p['data']
+        score = main_data['score']
+
+        # BOTH
+        kind = p['kind']
+        dictionary['kind'] = kind
+        dictionary['score'] = score
+        dictionary['created_utc'] = main_data['created_utc']
+        dictionary['author'] = author
+        dictionary['id'] = main_data['id']
+        dictionary['subreddit'] = main_data['subreddit']
+
+        if kind == 't1':
+            # COMMENTS
+
+            str_body = main_data['body'].encode('ascii', 'ignore')
+            str_body = str.replace(str_body, '\n', ' ')
+            str_body = str.replace(str_body, '\t', ' ')
+            dictionary['body'] = str_body
+
+            num_prior_replies = get_num_prior_replies(
+                    main_data['link_id'],
+                    main_data['parent_id'],
+                    main_data['created_utc'])
+            dictionary['num_replies_before_this_reply'] = num_prior_replies
+        else:
+            # LINKS
+            dictionary['body'] = None
+
+        print(dictionary)
+
+author_looper('genkito')
