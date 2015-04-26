@@ -2,6 +2,8 @@
 
 import time
 import requests
+import re
+import json
 
 """General Notes
 https://www.reddit.com/dev/api
@@ -79,8 +81,7 @@ def get_num_prior_replies(base_link_id, parent_fullname, orig_utc):
                         time.sleep(2)
                         if check_if_earlier(c): num_prior_replies += 1
             else:
-                curr_utc = data['created_utc']
-                if curr_utc < orig_utc: num_prior_replies += 1
+                if data['created_utc'] < orig_utc: num_prior_replies += 1
         return num_prior_replies
 
     parent_id = rm_type(parent_fullname)
@@ -89,7 +90,6 @@ def get_num_prior_replies(base_link_id, parent_fullname, orig_utc):
         parent_url = make_url(BASE_URL, parent_id)
     else:
         parent_url = make_url(get_url_from_fullname(base_link_id), parent_id)
-    print('93', parent_url)
     data = requests.get(parent_url, headers=header).json()
     return gnpr_helper(get_replies(data, is_link))
 
@@ -117,40 +117,47 @@ def author_looper(author):
                 'body', 'urls_included', 'is_first_comment_by_author_in_thread',
                 'url', 'kind' 'num_replies_before_this_reply']
 
+    # NOTE: using a dictionary list for convenient post-update of values after...
+    #   having looped, b/c some of the more complicated fields will require this
+    dict_list = []
+
     for p in posts:
-        dictionary = {}
+        post_info = {}
         for key in key_list:
-            dictionary[key] = None
+            post_info[key] = None
 
         main_data = p['data']
         score = main_data['score']
 
         # BOTH
         kind = p['kind']
-        dictionary['kind'] = kind
-        dictionary['score'] = score
-        dictionary['created_utc'] = main_data['created_utc']
-        dictionary['author'] = author
-        dictionary['id'] = main_data['id']
-        dictionary['subreddit'] = main_data['subreddit']
+        post_info['kind'] = kind
+        post_info['score'] = score
+        post_info['created_utc'] = main_data['created_utc']
+        post_info['author'] = author
+        post_info['id'] = main_data['id']
+        post_info['subreddit'] = main_data['subreddit']
 
         if kind == 't1':
             # COMMENTS
 
             str_body = main_data['body'].encode('ascii', 'ignore')
-            str_body = str.replace(str_body, '\n', ' ')
-            str_body = str.replace(str_body, '\t', ' ')
-            dictionary['body'] = str_body
+            str_body = re.sub('\t|\n', ' ', str_body)
+            post_info['body'] = re.sub(re.compile(r'\\'), '', str_body)
 
             num_prior_replies = get_num_prior_replies(
                     main_data['link_id'],
                     main_data['parent_id'],
                     main_data['created_utc'])
-            dictionary['num_replies_before_this_reply'] = num_prior_replies
+            post_info['num_replies_before_this_reply'] = num_prior_replies
         else:
             # LINKS
-            dictionary['body'] = None
+            post_info['body'] = None
 
-        print(dictionary)
+        print(json.dumps(post_info))
+        dict_list.append(post_info)
+    f = open('results.json', 'w')
+    f.write(json.dumps(dict_list))
+    f.close()
 
 author_looper('genkito')
