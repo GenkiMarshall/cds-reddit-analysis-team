@@ -231,8 +231,8 @@ totalWeeks = int((first_observed_post - last_observed_post)/604800)
 weeksOfLinks = getWeeksOfLinks(t3List, totalWeeks, first_observed_post)
 weeksOfComments = getWeeksOfComments(t1List, totalWeeks, first_observed_post)
 
-print str(weeksOfLinks)
-print str(weeksOfComments)
+#print str(weeksOfLinks[1])
+#print str(weeksOfComments[0][0]['data']['score'])
 
 links_per_week = [None] * totalWeeks
 links_karma_per_week = [None] * totalWeeks
@@ -241,9 +241,13 @@ comments_karma_per_week = [None] * totalWeeks
 
 for n in range(totalWeeks):
     links_per_week[n] = len(weeksOfLinks[n])
-    links_karma_per_week[n] = sum(weeksOfLinks[n]['data']['score'])
+    links_karma_per_week[n] = 0
+    for a in range(len(weeksOfLinks[n])):
+	links_karma_per_week[n] =  links_karma_per_week[n] + weeksOfLinks[n][a]['data']['score']
     comments_per_week[n] = len(weeksOfComments[n])
-    comments_karma_per_week[n] = sum(weeksOfComments[n]['data']['score'])
+    comments_karma_per_week[n] = 0
+    for b in range(len(weeksOfComments[n])):
+	comments_karma_per_week[n] = comments_karma_per_week[n] + weeksOfComments[n][b]['data']['score']
 
 print 'is_mod: ' + str(is_mod) +'\n'
 print 'is_verified: ' + str(is_verified) + '\n'
