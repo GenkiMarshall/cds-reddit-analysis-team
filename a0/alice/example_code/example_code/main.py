@@ -123,10 +123,3 @@ def link_ids():
     while True:
         link_file.write(link_id_stream.get_next_link_id() + "\n");
     
-
-if __name__ == '__main__':
-
-
-
-          
-    

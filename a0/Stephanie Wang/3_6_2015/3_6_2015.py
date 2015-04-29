@@ -5,13 +5,11 @@ with open('authors2.txt') as f:
         words = line.split();
         name = words[0];
         linkKarma = words[2];
-        try:
-            int('')
-        except ValueError:
-            sumLinkKarma = sumLinkKarma + int(linkKarma) 
         userID = words[4];
         numberofAuthors += 1;
         print('name: ' + words[0] + ' linkKarma: ' + words[2] + ' id: ' + words[4]);
+        sumLinkKarma = sumLinkKarma + linkKarma;
     
-    print (sumLinkKarma);
-        
+    avg_linkKarma = sumLinkKarma / numberofAuthors;
+    
+    print(avg_linkKarma);

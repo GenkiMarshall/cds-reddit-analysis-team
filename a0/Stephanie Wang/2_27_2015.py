@@ -41,23 +41,9 @@ def getData(info):
             hour = localTime.tm_hour
             times.append(hour)
     return {'total_number_of_ferrets':total_number_of_ferrets, 'times':times }
-getData(info)
+print getData(info)
 
 
-# In[85]:
-
-plt.xlabel('Time')
-plt.ylabel('Frequency of ferret')
-plt.title('Histogram of ferret')
-pos = arange(24) + 0.5
-xticks(pos, ('1AM', '2AM', '3AM' ,'4AM', '5AM', '6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM',
-             '7PM', '8PM', '9PM', '10PM', '11PM', '12AM'))
-barh(pos, total_number_of_ferrets, align = 'center', color = '#b8ff5c')
-plt.grid(True)
-plt.show()
-
-
-# In[ ]:
 
 
 
