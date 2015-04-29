@@ -27,7 +27,7 @@ def make_url(*args):
         if ret != '' and ret[-1:] != '/':
             ret += '/'
         ret += add
-    return ret + '.json'
+    return ret + '.json?limit=100'
 # takes in a fullname of a thing 'tn_abc...' and returns n == 3
 def is_link_name(fullname): return fullname[1:2] == '3'
 # takes in a fullname of a thing 'tn_abc...' and returns its id 'abc...'
@@ -90,16 +90,9 @@ def get_num_prior_replies(base_link_id, parent_fullname, orig_utc):
         parent_url = make_url(BASE_URL, parent_id)
     else:
         parent_url = make_url(get_url_from_fullname(base_link_id), parent_id)
+    time.sleep(2)
     data = requests.get(parent_url, headers=header).json()
     return gnpr_helper(get_replies(data, is_link))
-
-# TODO: gets non-trivial data that is not in the author's history
-def get_extra_data(url, is_comment_url):
-    meta_data = get_meta_data(data, 1 if is_comment_url else 0)
-    if is_comment_url:
-        print('analyzing comment: ' + url)
-    else:
-        print('analyzing link: ' + url)
 
 """Main Author Looper
 Runs the main loop of the code: iterating through an author's history to gather data
