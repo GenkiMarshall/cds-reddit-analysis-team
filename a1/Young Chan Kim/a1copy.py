@@ -26,6 +26,18 @@ def isMod(a):
 	return d['data']['is_mod']
 
 
+def getTotalLinkKarma(a):
+	url = 'http://www.reddit.com/user/' + a + '/about.json'
+	d = getJSONData(url)
+	return d['data']['link_karma']
+
+
+def getTotalCommentKarma(a):
+	url = 'http://www.reddit.com/user/' + a + '/about.json'
+	d = getJSONData(url)
+	return d['data']['comment_karma']
+
+
 def isVerified(a):
 	"""Return True if this author is linked to a verified email address.
 	Precondition: a is a string of the author's name.
@@ -205,8 +217,6 @@ def getWeeksOfComments(t1List, totalWeeks, first):
     return allWeeks
 
 
-
-
 #Tester
 
 #input author's name
@@ -217,6 +227,10 @@ is_mod = isMod(author)
 is_verified = isVerified(author)
 is_gold = isGold(author)
 created_utc = getCreatedUTC(author)
+total_link_karma = getTotalLinkKarma(author)
+total_comment_karma = getTotalCommentKarma(author)
+total_link_number = getNumThreads(getListOfThreadsChildren(author))
+total_comment_number = getNumComments(getListOfCommentsChildren(author))
 	
 have_all_comments = haveAllComments(author)
 have_all_threads = haveAllThreads(author)
@@ -249,19 +263,24 @@ for n in range(totalWeeks):
     for b in range(len(weeksOfComments[n])):
 	comments_karma_per_week[n] = comments_karma_per_week[n] + weeksOfComments[n][b]['data']['score']
 
-print 'is_mod: ' + str(is_mod) +'\n'
-print 'is_verified: ' + str(is_verified) + '\n'
-print 'is_gold: ' + str(is_gold) + '\n'
-print 'created_utc: ' + str(created_utc) + '\n'
-print 'have_all_comments: ' + str(have_all_comments) + '\n'
-print 'have_all_threads: ' + str(have_all_threads) + '\n'
-print 'first_observed_post: ' + str(first_observed_post) + '\n'
-print 'last_observed_post: ' + str(last_observed_post) + '\n'
+print '"is_mod": ' + str(is_mod) +'\n'
+print '"is_verified": ' + str(is_verified) + '\n'
+print '"is_gold": ' + str(is_gold) + '\n'
+print '"total_link_karma": ' + str(total_link_karma) + '\n'
+print '"total_comment_karma": ' + str(total_comment_karma) + '\n'
+print '"total_link_number": ' + str(total_link_number) + '\n'
+print '"total_comment_number": ' + str(total_comment_number) + '\n'
 
-print 'links_per_week: ' + str(links_per_week) + '\n'
-print 'links_karma_per_week: ' + str(links_karma_per_week) + '\n'
-print 'comments_per_week: ' + str(comments_per_week) + '\n'
-print 'comments_karma_per_week: ' + str(comments_karma_per_week) + '\n'
+print '"created_utc": ' + str(created_utc) + '\n'
+print '"have_all_comments": ' + str(have_all_comments) + '\n'
+print '"have_all_threads": ' + str(have_all_threads) + '\n'
+print '"first_observed_post": ' + str(first_observed_post) + '\n'
+print '"last_observed_post": ' + str(last_observed_post) + '\n'
+
+print '"links_per_week": ' + str(links_per_week) + '\n'
+print '"links_karma_per_week": ' + str(links_karma_per_week) + '\n'
+print '"comments_per_week": ' + str(comments_per_week) + '\n'
+print '"comments_karma_per_week": ' + str(comments_karma_per_week) + '\n'
 
 
 
