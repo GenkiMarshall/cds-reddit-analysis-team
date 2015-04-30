@@ -1,4 +1,4 @@
-# April 24, 2015
+# April 29, 2015
 # Young Chan Kim
 
 import requests
@@ -185,52 +185,44 @@ def getLastObservedPost(a):
 
 
 
-
-
-
 #Tester
 
-#input the name of the file containing all authors
-filename = raw_input('Type the name of the file containing all authors: ')
+snopedlist = ['UsefulCongressman', 'Rednblu777', 'defendsTheUnpopular', 'kmcm07', 'franki-fig', 'BreezyBay', 
+'vweight', 'beatlesfanatic64', 'Political_Lemming', 'Harvey66', '--moose--', 'ArchStantonsDead', 
+'ThunderwearUnderwear', 'deckerparkes', 'ai0001', 'dielon108', 'gpsfan', '1776ftw', 'some_a_hole', 
+'NeonClawsOfGamblor', 'ThrowAway65428', 'deep_fried_pork', 'portugalthephilosoph', 'izzbizz', 
+'Canttakethewhyfromme', 'rudecanuck', 'Strood', 'Jug_Heads_Revenge', 'Anewfamily', 'Snyderrr', 'lagirl80', 
+'DapperJD', 'Mr_Munchy', 'crackie_chan', 'wtfiswrongwithit', 'VioletHood', 'epsilonleqzero', 
+'FascistRickScott', 'iwasnotshadowbanned', 'I_am_the_cloud']
 
-# Process text file
-file = open(filename)
-authorlist = []    
-for line in file:
-    if ('\n' in line):
-        authorlist.append(line[:-1])
-    else:
-        authorlist.append(line)
-file.close()
-
-# Collect only the authors who were snoped
-snopedlist = []
-for a in authorlist:
-	author = a.split()
-	if (int(author[1]) > 0):
-		snopedlist.append(author[0])
-
-# print the fields for each snoped author
+# print the fields in JSON format
+jsonResult = []
 for snoped in snopedlist:
-	is_mod = isMod(snoped)
-	is_verified = isVerified(snoped)
-	is_gold = isGold(snoped)
-	created_utc = getCreatedUTC(snoped)
+	child = {}
+
+	url = 'http://www.reddit.com/user/' + snoped + '/about.json'
+	d = getJSONData(url)
+
+	child['is_mod'] = d['data']['is_mod']
+	child['is_verified'] = d['data']['has_verified_email']
+	child['is_gold'] = d['data']['is_gold']
+	child['created_utc'] = d['data']['created_utc']
+	child['total_link_karma'] = d['data']['link_karma']
+	child['total_comment_karma'] = d['data']['comment_karma']
 	
-	have_all_comments = haveAllComments(snoped)
-	have_all_threads = haveAllThreads(snoped)
+	child['total_comment_number'] = getNumComments(getListOfCommentsChildren(snoped))
+	child['total_link_number'] = getNumThreads(getListOfThreadsChildren(snoped))
 
-	first_observed_post = getFirstObservedPost(snoped)
-	last_observed_post = getLastObservedPost(snoped)
+	child['first_observed_post'] = getFirstObservedPost(snoped)
+	child['last_observed_post'] = getLastObservedPost(snoped)
 
-	print snoped + '- is_mod: ' + str(is_mod) +'\n'
-	print snoped + '- is_verified: ' + str(is_verified) + '\n'
-	print snoped + '- is_gold: ' + str(is_gold) + '\n'
-	print snoped + '- created_utc: ' + str(created_utc) + '\n'
-	print snoped + '- have_all_comments: ' + str(have_all_comments) + '\n'
-	print snoped + '- have_all_threads: ' + str(have_all_threads) + '\n'
-	print snoped + '- first_observed_post: ' + str(first_observed_post) + '\n'
-	print snoped + '- last_observed_post: ' + str(last_observed_post) + '\n\n'
+	jsonResult.append(child)
+
+print json.dumps(jsonResult)
+
+
+
+
 
 
 

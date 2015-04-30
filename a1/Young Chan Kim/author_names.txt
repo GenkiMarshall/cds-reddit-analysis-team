@@ -4,11 +4,9 @@ malleus__maleficarum	7	0
 a404notfound	0	0
 Oprah_Pwnfrey	0	0
 vbfire	0	0
-franundrum	0	0
 Insomnolence_soul	0	0
 ScaldingSoup	0	0
 CactusMunchies	0	0
-ElectricSpoon75	0	0
 JustinClarkv1	0	0
 Publius35	0	0
 ttchoubs	0	0
@@ -20,7 +18,6 @@ GuyMumbles	0	0
 lordcirth	0	0
 l_l_l_l_l_l_l_l	0	0
 CaptainDudeGuy	0	0
-p_U_c_K	0	0
 Copse_Of_Trees	0	0
 DGer	0	0
 trolliamnot	0	0
@@ -28,11 +25,8 @@ GingerNutt	0	0
 MattKellegrew	0	0
 konzahiker	0	0
 TheColorsDuke	0	0
-watermelon__man	0	0
 thebannanaman	0	0
 RedactedSockPuppet	0	0
-Frums	0	0
-BillRush	0	0
 erockca	0	0
 Pornfest	0	0
 whiteyonthemoon	0	0
@@ -67,7 +61,6 @@ AllRedEverything50	0	0
 drbojangles	0	0
 SorreltheHorse	0	0
 ATL_rob	0	0
-h011	0	0
 CluelessClue	0	0
 IRunOverThings	0	0
 mpsalws	0	0
@@ -101,14 +94,11 @@ Only_Reasonable	0	0
 channelph	0	0
 MUH_BEEEEEAAAAANS	0	0
 melkor42	0	0
-Babb0102	0	0
 tracejm	0	0
 FastandBulbus	0	0
-ironfortified	0	0
 dudebro5000	0	0
 redditmeastory	0	0
 poifcgmp	0	0
-Goldenbaumsteinowitz	0	0
 DuzzExor	0	0
 Tryhard13	0	0
 Neil_Degrasse_Bacon	0	0
@@ -147,13 +137,10 @@ Scrub-in	0	0
 DrunkSkipBayless	0	0
 BamBamBoogaloo	0	0
 vfxDan	0	0
-HisDudeness16	0	0
 Ardeet	0	0
-nehwomannehcry	0	0
 HTRK74JR	0	0
 Urban_Savage	0	0
 jvalordv	2	0
-Auralas	0	0
 jimbojones888	0	0
 packetOFfries	0	0
 vampyweeks	0	0
@@ -168,13 +155,11 @@ StodRerling	0	0
 joltek	0	0
 MedullaOblongAwesome	0	0
 Ch3t	0	0
-Callizors	0	0
 wackoman	0	0
 fty170	0	0
 blastradii	0	0
 Labonnie	0	0
 slumpfish	0	0
-MustLoveVaginas	0	0
 WanderingStoner	0	0
 zalite	0	0
 bmacu	0	0
@@ -225,7 +210,6 @@ Morkai_AlMandragon	0	0
 dossier762	0	0
 blochsound	0	0
 ImGonnaLiveForever	0	0
-Son_of_Plug	0	0
 jkman	0	0
 poopy_britches	0	0
 xpected	0	0
@@ -240,7 +224,6 @@ James_Deano	0	0
 ifiwereu	0	0
 a4bh3	0	0
 sinyre	0	0
-jaxhax	0	0
 MiraLou19	0	0
 tamman2000	0	0
 richmana	0	0
@@ -255,7 +238,6 @@ paintbucketholder	0	0
 Abraxas65	0	0
 BigDaddyRos	0	0
 shiers69	0	0
-JesseLives	0	0
 light_sweet_crude	0	0
 Oniichan_Overload	0	0
 1_2__3	0	0
@@ -6220,7 +6202,6 @@ laela_says	0	0
 iwanderasiwonder	0	0
 elducky	0	0
 omadanwar	0	0
-zingsolo85	1	0
 CommuterTrain	0	0
 xpld	0	0
 curiosgreg	0	0
@@ -14554,7 +14535,6 @@ internetpersona11	0	0
 ygri	0	0
 mojocujo	0	0
 batose	0	0
-MaximeMeretrax	0	0
 ahabswhale	0	0
 nothingmyfriend	0	0
 thinkbeforeposting	0	0
