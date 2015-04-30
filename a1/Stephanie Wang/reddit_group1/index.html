@@ -1,0 +1,141 @@
+<html>
+  <html>
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Varela' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style>
+        .button-success {
+            background: rgb(28, 184, 65); /* this is a green */
+        }
+        .button-secondary {
+            background: rgb(66, 184, 221); /* this is a light blue */
+        }
+        body { 
+            font-family: 'Varela', sans-serif;
+            } 
+        div { 
+            margin: 30px; 
+        }
+        svg {
+          color: #ccc;
+        }
+        .axis path { fill: none; stroke: #CCC; }
+        .axis line { stroke: #CCC; }
+    </style>
+  </head>
+
+  <body>
+    <div id="container">
+      <h2>Observing the Most Recent 36 Authors on Reddit</h2>
+      <div id="option">
+      <input name="linkButton" type="button" value="Links vs. Links Karma" class= "button-success pure-button" onclick="linkUpdate()" />
+      <input name="commentButton" type="button" value="Comments vs. Comments Karma" class= "button-secondary pure-button" onclick="commentUpdate()" />
+    </div>
+    </div>
+    <!-- Custom Script -->
+    <script>
+      var numbers;
+      var width = document.getElementById('container').offsetWidth;
+      var height = width / 2;
+      var svg, g;
+      setup(width,height);
+
+      function setup(width,height){
+        svg = d3.select("#container").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+
+        g = svg.append("g");
+      }
+      var xScale, yScale, xAxis, yAxis, circles;
+      
+      // ** Update data section (Called from the onclick)
+      function linkUpdate() {
+        d3.json("data.json", function (error, data){
+          numbers = data;
+  
+          xScale = d3.scale.linear().range([80, width - 60]).domain(d3.extent(data, function(d) { return d.total_link_number; })); 
+          yScale = d3.scale.linear().range([height - 60, 80]).domain(d3.extent(data, function(d) { return d.total_link_karma; }));
+  
+          xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+          yAxis = d3.svg.axis().scale(yScale).orient("left");
+          svg.append("g").call(xAxis).attr("class", "x axis").attr("fill", "#ccc").attr("transform", "translate(30," + (height - 60) + ")");
+          svg.append("g").call(yAxis).attr("class", "y axis").attr("fill", "#ccc").attr("transform", "translate(80,0)");
+  
+          circles = svg.selectAll("circle").data(numbers)
+          .enter().append("circle").attr("class", "circles");
+  
+          circles
+          .attr("cx", function (d) { return xScale(d.total_link_number) })
+          .attr("cy", function (d) { return yScale(d.total_link_karma) })
+          .attr("r",  "20")
+          .attr("opacity", 0.4)
+          .style("fill", function (d) {
+              if (d.is_verified){
+                  return "#BCED91"; //green
+              }
+              else{
+                  return "lightsalmon"; //red
+              }
+          })
+        });
+        
+        svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y",height)
+        .text("Number of Links");
+        
+        svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("x", 130)
+        .attr("y", 30)
+        .attr("dy", ".75em")
+        .text("Link Karma");
+      }
+      
+    // ** Update data section (Called from the onclick)
+    function commentUpdate() {
+      d3.json("data.json", function(error, data) {
+        numbers = data;
+        xScale = d3.scale.linear().range([80, width - 60]).domain(d3.extent(data, function(d) { return d.total_comment_number; })); 
+        yScale = d3.scale.linear().range([height - 60, 80]).domain(d3.extent(data, function(d) { return d.total_comment_karma; }));
+          
+        circles
+          .attr("cx", function (d) { return xScale(d.total_comment_number) })
+          .attr("cy", function (d) { return yScale(d.total_comment_karma) })
+          .attr("r",  "20")
+          .attr("opacity", 0.4)
+          .style("fill", function (d) {
+              if (d.is_verified){
+                  return "#BCED91"; //green
+              }
+              else{
+                  return "lightsalmon"; //red
+              }
+          })
+        var svg = d3.select("#container").transition();
+
+        svg.select(".x.axis")
+            .duration(750)
+            .call(xAxis);
+        svg.select(".y.axis")
+            .duration(750)
+            .call(yAxis);
+        svg.select(".x.label")
+            .duration(750)
+            .text("Number of Comments");
+        svg.select(".y.label")
+            .text("Comment Karma");
+
+      });
+    }
+    </script>
+  </body>
+</html>
