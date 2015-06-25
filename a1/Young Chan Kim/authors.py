@@ -28,7 +28,7 @@ for x in thelist:
 	if (int(authorInfo[1]) > 0):
 		snopedlist.append(authorInfo)
 
-# Clean out the errors (deleted accounts)
+# Clean out errors (deleted accounts)
 cleanlist = []
 for info in snopedlist:
 	url = 'http://www.reddit.com/user/' + info[0] + '/about.json'
